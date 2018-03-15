@@ -1,0 +1,53 @@
+
+version: '3'
+
+services:
+  gateway:
+    image: gateway:1.0-SNAPSHOT
+    ports:
+      - "127.0.0.1:17000:7000"
+    environment:
+      - "JAVA_OPTS=-Xmx500m -Xms500m -Dspring.profiles.active=docker"
+  eureka:
+    image: eureka:1.0-SNAPSHOT
+    ports:
+      - "127.0.0.1:18761:8761"
+    environment:
+      - "JAVA_OPTS=-Xmx500m -Xms500m -Dspring.profiles.active=docker"
+  command1:
+    image: command:1.0-SNAPSHOT
+    ports:
+      - "127.0.0.1:18050:8050"
+    environment:
+      - "JAVA_OPTS=-Xmx500m -Xms500m -Dspring.profiles.active=docker"
+  command2:
+    image: command:1.0-SNAPSHOT
+    ports:
+      - "127.0.0.1:18051:8050"
+    environment:
+      - "JAVA_OPTS=-Xmx500m -Xms500m -Dspring.profiles.active=docker"
+  query1:
+    image: query:1.0-SNAPSHOT
+    ports:
+      - "127.0.0.1:17050:7050"
+    environment:
+      - "JAVA_OPTS=-Xmx500m -Xms500m -Dspring.profiles.active=docker"
+  query2:
+    image: query:1.0-SNAPSHOT
+    ports:
+      - "127.0.0.1:17051:7050"
+    environment:
+      - "JAVA_OPTS=-Xmx500m -Xms500m -Dspring.profiles.active=docker"
+  postgres:
+    image: postgres:10.3
+    ports:
+      - "127.0.0.1:45432:5432"
+    environment:
+      - POSTGRES_DB=ocean
+      - POSTGRES_USER=ocean_user
+      - POSTGRES_PASSWORD=ocean_pass
+  rabbitmq:
+    image: rabbitmq:3.7-management
+    ports:
+      - "127.0.0.1:15672:15672"
+      - "127.0.0.1:45672:5672"
