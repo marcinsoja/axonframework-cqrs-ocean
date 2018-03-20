@@ -6,6 +6,7 @@ import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Component;
 import pl.marcinsoja.cms.ocean.api.page.PageCreatedEvent;
+import pl.marcinsoja.cms.ocean.api.page.PageElementCreatedEvent;
 
 @Component
 @RequiredArgsConstructor
@@ -18,11 +19,24 @@ public class PageEventListener {
     public void on(PageCreatedEvent event) {
         log.trace("Handling event {event: {}}", event);
         repository.save(PageEntry.builder()
-                                 .pageId(event.getId())
-                                 .title(event.getTitle())
+                                 .id(event.getId())
+                                 .layoutId(event.getLayoutId())
                                  .slug(event.getSlug())
-                                 .content(event.getContent())
+                                 .name(event.getName())
                                  .build());
+        log.debug("Handled event {event: {}}", event);
+    }
+
+    @EventHandler
+    public void on(PageElementCreatedEvent event) {
+        log.trace("Handling event {event: {}}", event);
+        PageEntry pageEntry = repository.findOne(event.getPageId());
+        pageEntry.getContents().add(PageEntryContent.builder()
+                                                    .id(event.getElementId())
+                                                    .contentId(event.getContentId())
+                                                    .contentType(event.getContentType())
+                                                    .build());
+        repository.save(pageEntry);
         log.debug("Handled event {event: {}}", event);
     }
 }

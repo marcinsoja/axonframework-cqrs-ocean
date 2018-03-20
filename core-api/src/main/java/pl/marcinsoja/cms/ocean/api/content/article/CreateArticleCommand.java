@@ -1,5 +1,6 @@
-package pl.marcinsoja.cms.ocean.api.layout;
+package pl.marcinsoja.cms.ocean.api.content.article;
 
+import com.neovisionaries.i18n.LanguageCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -12,15 +13,15 @@ import java.util.UUID;
 @Value
 @Builder
 @AllArgsConstructor
-public class UpdateLayoutPlaceholderCommand {
+public class CreateArticleCommand {
     @NotNull
     @TargetAggregateIdentifier
-    private final UUID layoutId;
+    private final UUID articleId;
 
-    @NotNull
-    private final UUID placeholderId;
     @NotBlank
     private final String name;
+    @NotBlank
+    private final String content;
     @NotNull
-    private final Integer order;
+    private final LanguageCode language;
 }

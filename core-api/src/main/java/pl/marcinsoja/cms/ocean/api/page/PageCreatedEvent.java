@@ -9,6 +9,5 @@ public class PageCreatedEvent {
     private final UUID id;
     private final UUID layoutId;
     private final String slug;
-    private final String title;
-    private final String content;
+    private final String name;
 }

@@ -2,7 +2,6 @@ package pl.marcinsoja.cms.ocean.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.axonframework.commandhandling.SimpleCommandBus;
-import org.axonframework.commandhandling.distributed.DistributedCommandBus;
 import org.axonframework.config.EventHandlingConfiguration;
 import org.axonframework.messaging.interceptors.BeanValidationInterceptor;
 import org.axonframework.serialization.Serializer;
@@ -35,9 +34,7 @@ public class AxonConfiguration {
     }
 
     @Autowired
-    public void configureBeanValidation(DistributedCommandBus commandBus,
-                                        @Qualifier("localSegment") SimpleCommandBus localSegment) {
-        commandBus.registerDispatchInterceptor(new BeanValidationInterceptor<>());
+    public void configureBeanValidation(@Qualifier("localSegment") SimpleCommandBus localSegment) {
         localSegment.registerDispatchInterceptor(new BeanValidationInterceptor<>());
     }
 

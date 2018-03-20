@@ -2,6 +2,7 @@ package pl.marcinsoja.cms.ocean.core.layout;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
@@ -11,8 +12,8 @@ import org.axonframework.commandhandling.model.ForwardMatchingInstances;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.util.Assert;
-import pl.marcinsoja.cms.ocean.api.layout.AddLayoutPlaceholderCommand;
 import pl.marcinsoja.cms.ocean.api.layout.CreateLayoutCommand;
+import pl.marcinsoja.cms.ocean.api.layout.CreateLayoutPlaceholderCommand;
 import pl.marcinsoja.cms.ocean.api.layout.DeleteLayoutPlaceholderCommand;
 import pl.marcinsoja.cms.ocean.api.layout.LayoutCreatedEvent;
 import pl.marcinsoja.cms.ocean.api.layout.LayoutPlaceholderCreatedEvent;
@@ -23,6 +24,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
 
+@Getter
 @EqualsAndHashCode(of = "id")
 @Aggregate
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -40,7 +42,7 @@ public class Layout {
     }
 
     @CommandHandler
-    public void command(AddLayoutPlaceholderCommand command) {
+    public void command(CreateLayoutPlaceholderCommand command) {
         AggregateLifecycle.apply(new LayoutPlaceholderCreatedEvent(command.getLayoutId(), command.getPlaceholderId(), command.getName(), command.getOrder()));
     }
 

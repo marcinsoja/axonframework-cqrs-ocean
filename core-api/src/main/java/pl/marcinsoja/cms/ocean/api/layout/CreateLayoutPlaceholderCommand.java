@@ -4,18 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import org.axonframework.commandhandling.TargetAggregateIdentifier;
-import org.axonframework.commandhandling.model.EntityId;
+import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Value
 @Builder
 @AllArgsConstructor
-public class AddLayoutPlaceholderCommand {
+public class CreateLayoutPlaceholderCommand {
+    @NotNull
     @TargetAggregateIdentifier
     private final UUID layoutId;
-    @EntityId
+
+    @NotNull
     private final UUID placeholderId;
+    @NotBlank
     private final String name;
+    @NotNull
     private final Integer order;
 }

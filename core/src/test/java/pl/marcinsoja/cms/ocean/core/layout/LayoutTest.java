@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import pl.marcinsoja.cms.ocean.api.layout.AddLayoutPlaceholderCommand;
 import pl.marcinsoja.cms.ocean.api.layout.CreateLayoutCommand;
+import pl.marcinsoja.cms.ocean.api.layout.CreateLayoutPlaceholderCommand;
 import pl.marcinsoja.cms.ocean.api.layout.DeleteLayoutPlaceholderCommand;
 import pl.marcinsoja.cms.ocean.api.layout.LayoutCreatedEvent;
 import pl.marcinsoja.cms.ocean.api.layout.LayoutPlaceholderCreatedEvent;
@@ -30,54 +30,50 @@ public class LayoutTest {
     }
 
     @Test
-    public void testShouldCreateLayoutTest() {
-        UUID layoutId = UUID.randomUUID();
-        String layoutName = "Layout";
-        fixture.when(new CreateLayoutCommand(layoutId, layoutName))
+    public void shouldCreateLayout() {
+        CreateLayoutCommand cmd = new CreateLayoutCommand(UUID.randomUUID(), "name");
+
+        fixture.when(cmd)
                .expectSuccessfulHandlerExecution()
-               .expectEvents(new LayoutCreatedEvent(layoutId, layoutName));
+               .expectEvents(new LayoutCreatedEvent(cmd.getLayoutId(), cmd.getName()));
     }
 
     @Test
     public void shouldCreateLayoutPlaceholder() {
-        UUID layoutId = UUID.randomUUID();
-        UUID placeholderId = UUID.randomUUID();
-        String layoutName = "Layout";
-        String placeholderName = "place1";
-        fixture.given(new LayoutCreatedEvent(layoutId, layoutName))
-               .when(new AddLayoutPlaceholderCommand(layoutId, placeholderId, placeholderName, 1))
+        LayoutCreatedEvent layoutCreatedEvent = new LayoutCreatedEvent(UUID.randomUUID(), "name");
+
+        CreateLayoutPlaceholderCommand cmd = new CreateLayoutPlaceholderCommand(layoutCreatedEvent.getId(), UUID.randomUUID(), "name", 1);
+
+        fixture.given(layoutCreatedEvent)
+               .when(cmd)
                .expectSuccessfulHandlerExecution()
-               .expectEvents(new LayoutPlaceholderCreatedEvent(layoutId, placeholderId, placeholderName, 1))
-        ;
+               .expectEvents(new LayoutPlaceholderCreatedEvent(cmd.getLayoutId(), cmd.getPlaceholderId(), cmd.getName(), cmd.getOrder()));
     }
 
     @Test
     public void shouldDeleteLayoutPlaceholder() {
-        UUID layoutId = UUID.randomUUID();
-        UUID placeholderId = UUID.randomUUID();
-        String layoutName = "Layout";
-        String placeholderName = "place1";
-        fixture.given(new LayoutCreatedEvent(layoutId, layoutName), new LayoutPlaceholderCreatedEvent(layoutId, placeholderId, placeholderName, 1))
-               .when(new DeleteLayoutPlaceholderCommand(layoutId, placeholderId))
+        LayoutCreatedEvent createdEvent = new LayoutCreatedEvent(UUID.randomUUID(), "name");
+        LayoutPlaceholderCreatedEvent placeholderCreatedEvent = new LayoutPlaceholderCreatedEvent(createdEvent.getId(), UUID.randomUUID(), "name", 1);
+
+        DeleteLayoutPlaceholderCommand cmd = new DeleteLayoutPlaceholderCommand(placeholderCreatedEvent.getLayoutId(), placeholderCreatedEvent.getPlaceholderId());
+
+        fixture.given(createdEvent, placeholderCreatedEvent)
+               .when(cmd)
                .expectSuccessfulHandlerExecution()
-               .expectEvents(new LayoutPlaceholderDeletedEvent(layoutId, placeholderId))
-        ;
+               .expectEvents(new LayoutPlaceholderDeletedEvent(cmd.getLayoutId(), cmd.getPlaceholderId()));
     }
 
     @Test
     public void shouldUpdateLayoutPlaceholder() {
-        UUID layoutId = UUID.randomUUID();
-        UUID placeholderId1 = UUID.randomUUID();
-        UUID placeholderId2 = UUID.randomUUID();
-        String layoutName = "Layout";
-        String placeholderName = "place1";
-        fixture.given(
-                new LayoutCreatedEvent(layoutId, layoutName),
-                new LayoutPlaceholderCreatedEvent(layoutId, placeholderId1, placeholderName, 1),
-                new LayoutPlaceholderCreatedEvent(layoutId, placeholderId2, placeholderName, 2))
-               .when(new UpdateLayoutPlaceholderCommand(layoutId, placeholderId1, "change", 3))
+        LayoutCreatedEvent createdEvent = new LayoutCreatedEvent(UUID.randomUUID(), "name");
+        LayoutPlaceholderCreatedEvent placeholder1CreatedEvent = new LayoutPlaceholderCreatedEvent(createdEvent.getId(), UUID.randomUUID(), "name1", 1);
+        LayoutPlaceholderCreatedEvent placeholder2CreatedEvent = new LayoutPlaceholderCreatedEvent(createdEvent.getId(), UUID.randomUUID(), "name2", 2);
+
+        UpdateLayoutPlaceholderCommand cmd = new UpdateLayoutPlaceholderCommand(createdEvent.getId(), placeholder1CreatedEvent.getPlaceholderId(), "name_", 3);
+
+        fixture.given(createdEvent, placeholder1CreatedEvent, placeholder2CreatedEvent)
+               .when(cmd)
                .expectSuccessfulHandlerExecution()
-               .expectEvents(new LayoutPlaceholderUpdatedEvent(layoutId, placeholderId1, "change", 3))
-        ;
+               .expectEvents(new LayoutPlaceholderUpdatedEvent(cmd.getLayoutId(), cmd.getPlaceholderId(), cmd.getName(), cmd.getOrder()));
     }
 }

@@ -1,21 +1,24 @@
-package pl.marcinsoja.cms.ocean.core.type;
+package pl.marcinsoja.cms.ocean.core.content;
 
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.spring.stereotype.Aggregate;
 
-import java.util.List;
 import java.util.UUID;
 
+@Getter
+@EqualsAndHashCode(of = "id")
 @Aggregate
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ContentType {
+public class ContactForm {
+
+    public static final String CONTENT_TYPE = "contact-form.v1";
 
     @AggregateIdentifier
     private UUID id;
-
     private String name;
-
-    private List<AttributeHolder> attributes;
+    private String email;
 }
