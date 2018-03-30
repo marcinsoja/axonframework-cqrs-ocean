@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -34,14 +33,12 @@ public class Article {
     private Instant created;
     private Instant lastUpdated;
 
-    @CommandHandler
     public Article(CreateArticleCommand command) {
         AggregateLifecycle.apply(new ArticleCreatedEvent(command.getArticleId(), command.getName(), command.getContent(), command.getLanguage(), Instant.now()));
     }
 
-    @CommandHandler
-    public void command(UpdateArticleCommand command) {
-        AggregateLifecycle.apply(new ArticleUpdatedEvent(command.getArticleId(), command.getName(), command.getContent(), command.getLanguage(), Instant.now()));
+    public void update(UpdateArticleCommand command, Instant at) {
+        AggregateLifecycle.apply(new ArticleUpdatedEvent(command.getArticleId(), command.getName(), command.getContent(), command.getLanguage(), at));
     }
 
     @EventSourcingHandler
