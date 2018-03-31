@@ -6,7 +6,10 @@ import org.axonframework.amqp.eventhandling.spring.SpringAMQPMessageSource;
 import org.axonframework.serialization.Serializer;
 import org.axonframework.serialization.json.JacksonSerializer;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -18,6 +21,16 @@ public class AxonConfiguration {
     @Bean
     public Serializer serializer(ObjectMapper objectMapper) {
         return new JacksonSerializer(objectMapper);
+    }
+
+    @Bean
+    RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
+    }
+
+    @Bean
+    Queue queue() {
+        return new Queue("page-queue", true);
     }
 
     @Bean
