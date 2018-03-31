@@ -2,6 +2,7 @@ package pl.marcinsoja.cms.ocean.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.axonframework.commandhandling.SimpleCommandBus;
+import org.axonframework.config.Configurer;
 import org.axonframework.config.EventHandlingConfiguration;
 import org.axonframework.messaging.interceptors.BeanValidationInterceptor;
 import org.axonframework.serialization.Serializer;
@@ -18,6 +19,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import pl.marcinsoja.cms.ocean.core.content.Article;
+import pl.marcinsoja.cms.ocean.core.content.ArticleHandler;
+import pl.marcinsoja.cms.ocean.core.page.Page;
+import pl.marcinsoja.cms.ocean.core.page.PageHandler;
+
+import java.time.Clock;
 
 @Configuration
 public class AxonConfiguration {
@@ -36,6 +43,12 @@ public class AxonConfiguration {
     @Autowired
     public void configureBeanValidation(@Qualifier("localSegment") SimpleCommandBus localSegment) {
         localSegment.registerDispatchInterceptor(new BeanValidationInterceptor<>());
+    }
+
+    @Autowired
+    public void configure(Configurer configurer) {
+        configurer.registerCommandHandler(configuration -> new PageHandler(configuration.repository(Page.class)));
+        configurer.registerCommandHandler(configuration -> new ArticleHandler(configuration.repository(Article.class), Clock.systemUTC()));
     }
 
     @Bean

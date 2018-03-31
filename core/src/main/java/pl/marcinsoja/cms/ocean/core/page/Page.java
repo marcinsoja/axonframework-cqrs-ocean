@@ -36,7 +36,6 @@ public class Page {
     @AggregateMember(eventForwardingMode = ForwardMatchingInstances.class)
     private SortedSet<Element> elements = new TreeSet<>(Comparator.comparing(Element::getOrder));
 
-    @CommandHandler
     public Page(CreatePageCommand command) {
         AggregateLifecycle.apply(new PageCreatedEvent(command.getPageId(), command.getLayoutId(), command.getSlug(), command.getName()));
     }

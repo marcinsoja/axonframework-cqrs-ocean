@@ -12,6 +12,7 @@ import pl.marcinsoja.cms.ocean.api.page.PageCreatedEvent;
 import pl.marcinsoja.cms.ocean.api.page.PageElementCreatedEvent;
 import pl.marcinsoja.cms.ocean.core.content.Article;
 import pl.marcinsoja.cms.ocean.core.page.Page;
+import pl.marcinsoja.cms.ocean.core.page.PageHandler;
 
 import java.util.UUID;
 
@@ -23,6 +24,7 @@ public class PageTest {
     public void setUp() {
         fixture = new AggregateTestFixture<>(Page.class);
         fixture.registerCommandDispatchInterceptor(new BeanValidationInterceptor<>());
+        fixture.registerAnnotatedCommandHandler(new PageHandler(fixture.getRepository()));
     }
 
     @Test
